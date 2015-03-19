@@ -3,6 +3,8 @@ project( Assignment0 )
 
 set( CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++" )
 
+link_directories(lib/)
+
 find_package( PkgConfig REQUIRED )
 pkg_search_module( GLFW REQUIRED glfw3 )
 include_directories( ${GLFW_INCLUDE_DIRS} )
@@ -29,4 +31,5 @@ endif( APPLE )
 # add executable
 add_executable( Assignment0 buildTest.cpp shader.cpp )
 
-target_link_libraries( Assignment0 ${EXTRA_LIBS} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW_LIBRARIES} )
+target_link_libraries( Assignment0 ${EXTRA_LIBS} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES}
+    ${GLFW_LIBRARIES} SOIL )

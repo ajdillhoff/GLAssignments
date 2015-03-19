@@ -26,3 +26,15 @@
 *.exe
 *.out
 *.app
+
+# Other Files
+#*.zip
+
+# Make files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+*.cmake
+*.swp
+
+Assignment0

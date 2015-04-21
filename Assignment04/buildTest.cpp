@@ -14,19 +14,20 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader.hpp"
+#include "Camera.hpp"
 #include <iostream>
 
-const GLuint WIDTH = 1600, HEIGHT = 1200;
+const GLuint WIDTH = 2560, HEIGHT = 1440;
 
 // Define camera position and vectors
-glm::vec3 cameraPos   = glm::vec3( 0.0f, 0.0f,  3.0f );
-glm::vec3 cameraFront = glm::vec3( 0.0f, 0.0f, -1.0f );
-glm::vec3 cameraUp    = glm::vec3( 0.0f, 1.0f,  0.0f );
+
 bool keys[1024];
 
 // Define mouse position offset
 GLfloat lastX = WIDTH / 2, lastY = HEIGHT / 2;
 GLfloat yaw = -90.0f, pitch = 0.0f;
+// Aspect ratio for zoom
+GLfloat aspect = 45.0f;
 bool firstMouse = true;
 
 GLfloat deltaTime = 0.0f;
@@ -79,6 +80,18 @@ void mouseCallback( GLFWwindow *window, double xpos, double ypos ) {
     cameraFront = glm::normalize( front );
 }
 
+void scrollCallback( GLFWwindow *window, double xoffset, double yoffset ) {
+    if( aspect >= 1.0f && aspect <= 45.0f ) {
+        aspect -= yoffset;
+    }
+    if( aspect <= 1.0f ) {
+        aspect = 1.0f;
+    }
+    if( aspect >= 45.0f ) {
+        aspect = 45.0f;
+    }
+}
+
 void movementAction() {
     // Camera controls
     GLfloat cameraSpeed = 5.0f * deltaTime;
@@ -93,6 +106,9 @@ void movementAction() {
     }
     if( keys[GLFW_KEY_D] ) {
         cameraPos += glm::normalize( glm::cross( cameraFront, cameraUp ) ) * cameraSpeed;       
+    }
+    if( keys[GLFW_KEY_SPACE] ) {
+        cameraPos += cameraSpeed * cameraUp;
     }
 }
 
@@ -122,6 +138,7 @@ int main( int argc, char **argv ) {
     // Set input callbacks
     glfwSetKeyCallback( window, keyCallback );
     glfwSetCursorPosCallback( window, mouseCallback );
+    glfwSetScrollCallback( window, scrollCallback );
 
     glewExperimental = GL_TRUE;
     if ( glewInit() != GLEW_OK ) {
@@ -300,7 +317,7 @@ int main( int argc, char **argv ) {
 
         // projection matrix
         glm::mat4 projection;
-        projection = glm::perspective( 45.0f, (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f );
+        projection = glm::perspective( glm::radians( aspect ), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f );
         
         // Get their uniform location
         GLint modelLoc = glGetUniformLocation( ourShader.Program, "model" );
